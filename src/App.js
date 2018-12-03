@@ -49,8 +49,10 @@ class App extends Component {
     return Math.sqrt(x*x+y*y+z*z)
   }
   read_image(accel){
-    var hard_braking = -5.3936575
-    var hard_speed = 2.5
+    // var hard_braking = -5.3936575
+    // var hard_speed = 2.5
+    var hard_braking = -0.2
+    var hard_speed = 0.2
     if (accel<=hard_braking) {
       return states[2]
     }
