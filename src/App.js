@@ -161,9 +161,9 @@ class App extends Component {
   read_image(accel){
     // var hard_braking = -5.3936575
     // var hard_speed = 2.5
-    var hard_braking = -0.2
+    var hard_braking = 4
     var hard_speed = 1.5
-    if (accel<=hard_braking) {
+    if (accel>=hard_braking) {
       return states[2]
     }
     else if (accel>=hard_speed){
@@ -181,8 +181,7 @@ class App extends Component {
       zIndex: "10"
     }
     var button_style = {
-      color: "grey",
-      fontColor: "white"
+      fontSize: "8px"
     }
     if (!this.state.show_debugger) {
       style = {
@@ -194,17 +193,17 @@ class App extends Component {
 
         <meta name = "apple-mobile-web-app-capable" content="yes" />
           <div className="App">
-            <header className="App-header">
+            {/* <header className="App-header"> */}
               {/* <img src ={logo} className = "App-logo"></img> */}
               <div className = "container">
-                <button type = "Button" onClick = {this.handleDebugger} className = "btn" >{this.state.button_name}</button>
+                <button type = "Button" onClick = {this.handleDebugger} className = "btn" style={button_style}>{this.state.button_name}</button>
                 <img src={this.state.background_image} className="Background-Image" alt="logo" style = {image_style}/>
                 <div className = "Debugger" style = {style}>
                   {this.debugger}
                 </div>
               </div>
               
-            </header>
+            {/* </header> */}
           </div>
       </div>
       
