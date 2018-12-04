@@ -35,19 +35,38 @@ class App extends Component {
     this.handleMotion = this.handleMotion.bind(this)
     this.handleOrientation = this.handleOrientation.bind(this)
     this.handleDebugger = this.handleDebugger.bind(this);
-
+    var text_style = {
+      textAlign: "left",
+      display: "inline", 
+      margin: "0 auto"
+    }
     this.debugger = (
-      <div className = "App">
-        <b>Acceleration</b><br/><div>
-        a_x: <div className = "values">{this.state.x}</div><br/>
+      <div style = {text_style}>
+        <b>Acceleration</b><br/>
+        <div class="row">
+          <div class = "col-sm-4" style={text_style}>
+            a_x: {this.state.x}
+          </div>
+          <div class = "col-sm-4">
+            a_y: {this.state.y}
+          </div>
+          <div class = "col-sm-4">
+            a_z: {this.state.z}
+          </div>
         </div>
-        a_y: {this.state.y}<br/>
-        a_z: {this.state.z}<br/>
-        <br/>
+        <br />
         <b>Device Rotation</b><br/>
-        alpha: {this.state.alpha}<br/>
-        beta: {this.state.beta}<br/>
-        gamma: {this.state.gamma}<br/>
+        <div class="row">
+          <div class = "col-sm-4">
+            alpha: {this.state.alpha}
+          </div>
+          <div class = "col-sm-4">
+            beta: {this.state.beta}
+          </div>
+          <div class = "col-sm-4">
+            gamma: {this.state.gamma}
+          </div>
+        </div>
       </div>
     )
   }
@@ -56,24 +75,65 @@ class App extends Component {
     window.addEventListener('deviceorientation',this.handleOrientation)
   }
   handleMotion(event){
-    const x = event.acceleration.x
-    const y = event.acceleration.y
-    const z = event.acceleration.z
+    const x = event.acceleration.x.toFixed(1)
+    const y = event.acceleration.y.toFixed(1)
+    const z = event.acceleration.z.toFixed(1)
     var accel = this.total_accel(x,y,z)
     var state = this.read_image(accel)
     if (state != this.state.driving_state){
       this.setState({
-        background_image: image_key[state]
+        background_image: image_key[state],
+        x:x,
+        y:y,
+        z:z
       });
     }
+    this.updateValues()
   }
   handleOrientation(event){
+    // const abs = event.absolute.toFixed(1)
+    const alpha = event.alpha.toFixed(1)
+    const beta = event.beta.toFixed(1)
+    const gamma = event.gamma.toFixed(1)
     this.setState({
       absolute: event.absolute,
-      alpha: event.alpha,
-      beta: event.beta,
-      gamma: event.gamma
+      alpha: alpha,
+      beta: beta,
+      gamma: gamma
     })
+    this.updateValues()
+  }
+  updateValues(){
+    this.debugger = (
+      <div >
+        <br></br>
+        <b>Acceleration</b><br/>
+        <div class="row">
+          <div class = "col-sm-4">
+            a_x: {this.state.x}
+          </div>
+          <div class = "col-sm-4">
+            a_y: {this.state.y}
+          </div>
+          <div class = "col-sm-4">
+            a_z: {this.state.z}
+          </div>
+        </div>
+        <br />
+        <b>Device Rotation</b><br/>
+        <div class="row">
+          <div class = "col-sm-4">
+            alpha: {this.state.alpha}
+          </div>
+          <div class = "col-sm-4">
+            beta: {this.state.beta}
+          </div>
+          <div class = "col-sm-4">
+            gamma: {this.state.gamma}
+          </div>
+        </div>
+      </div>
+    )
   }
   handleDebugger(event){
     if (this.state.show_debugger == false){
@@ -94,7 +154,7 @@ class App extends Component {
   total_accel(x, y, z){
     var direction = 1.0;
     if (x<0){
-      direction = -1.0;
+      direction = 1.0;
     }
     return direction*Math.sqrt(x*x+y*y+z*z)
   }
@@ -131,6 +191,7 @@ class App extends Component {
     }
     return (
       <div>
+
         <meta name = "apple-mobile-web-app-capable" content="yes" />
           <div className="App">
             <header className="App-header">
