@@ -26,8 +26,6 @@ class App extends Component {
       background_image : background_0
     }
     this.handleMotion = this.handleMotion.bind(this)
-
-
   }
   componentDidMount(){
     window.addEventListener('devicemotion',this.handleMotion)
@@ -65,12 +63,14 @@ class App extends Component {
   }
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          {/* <img src ={logo} className = "App-logo"></img> */}
-          <img src={this.state.background_image} className="Background-Image" alt="logo" />
-        </header>
-      </div>
+      <meta name = "apple-mobile-web-app-capable" content="yes">
+        <div className="App">
+          <header className="App-header">
+            {/* <img src ={logo} className = "App-logo"></img> */}
+            <img src={this.state.background_image} className="Background-Image" alt="logo" />
+          </header>
+        </div>
+      </meta>
     );
   }
 }
