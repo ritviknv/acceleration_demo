@@ -52,7 +52,7 @@ class App extends Component {
     // var hard_braking = -5.3936575
     // var hard_speed = 2.5
     var hard_braking = -0.2
-    var hard_speed = 5
+    var hard_speed = 1.5
     if (accel<=hard_braking) {
       return states[2]
     }
