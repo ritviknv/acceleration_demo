@@ -33,7 +33,12 @@
   overflow: hidden;
   border: 0px;
 }
-
+.Debugger {
+  position: relative; 
+  heigh: auto;
+  width: 100%;
+  padding: 1px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

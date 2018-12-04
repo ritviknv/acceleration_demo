@@ -29,7 +29,7 @@ class App extends Component {
   }
   componentDidMount(){
     window.addEventListener('devicemotion',this.handleMotion)
-
+    window.addEventListener('deviceorientation',this.handleOrientation)
   }
   handleMotion(event){
     const x = event.acceleration.x
@@ -42,6 +42,9 @@ class App extends Component {
         background_image: image_key[state]
       });
     }
+  }
+  handleOrientation(event){
+    console.log("yo")
   }
   total_accel(x, y, z){
     return Math.sqrt(x*x+y*y+z*z)
@@ -63,14 +66,16 @@ class App extends Component {
   }
   render() {
     return (
-      <meta name = "apple-mobile-web-app-capable" content="yes">
-        <div className="App">
-          <header className="App-header">
-            {/* <img src ={logo} className = "App-logo"></img> */}
-            <img src={this.state.background_image} className="Background-Image" alt="logo" />
-          </header>
-        </div>
-      </meta>
+      <div>
+        <meta name = "apple-mobile-web-app-capable" content="yes" />
+          <div className="App">
+            <header className="App-header">
+              {/* <img src ={logo} className = "App-logo"></img> */}
+              <img src={this.state.background_image} className="Background-Image" alt="logo" />
+            </header>
+          </div>
+      </div>
+      
     );
   }
 }
