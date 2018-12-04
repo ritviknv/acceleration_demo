@@ -52,7 +52,7 @@ class App extends Component {
     // var hard_braking = -5.3936575
     // var hard_speed = 2.5
     var hard_braking = -0.2
-    var hard_speed = 0.2
+    var hard_speed = 5
     if (accel<=hard_braking) {
       return states[2]
     }
@@ -69,7 +69,6 @@ class App extends Component {
         <header className="App-header">
           {/* <img src ={logo} className = "App-logo"></img> */}
           <img src={this.state.background_image} className="Background-Image" alt="logo" />
-            mobikit demo
         </header>
       </div>
     );
