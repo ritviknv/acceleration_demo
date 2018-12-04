@@ -32,12 +32,46 @@
   width: 100%;
   overflow: hidden;
   border: 0px;
+  z-index: -1;
 }
 .Debugger {
-  position: relative; 
-  heigh: auto;
-  width: 100%;
-  padding: 1px;
+  z-index: 2;
+  color: black;
+  position: absolute;
+  top: 5%;
+  left: 16px;
+  text-align: center;
+  font-size: 12px;
+  background: black;
+  color: white
+}
+.container {
+  position: relative
+}
+.btn {
+  position: absolute;
+  top: 3%;
+  left: 10%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  background-color: grey;
+  color: #61dafb;
+  font-size: 10px;
+  padding: 2px 2px;
+  border-style: solid;
+  border-color: grey;
+  border-width: 1px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.values {
+  font-size: 10px;
+  padding: 2px 2px;
+  border-style: solid;
+  border-color: grey;
+  border-width: 1px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 @keyframes App-logo-spin {
   from {
