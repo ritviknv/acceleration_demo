@@ -3,8 +3,9 @@ import logo from './logo.svg';
 import background_0 from './background.png';
 import background_1 from './background_1.png';
 import background_2 from './background_2.png';
-
 import './App.css';
+import keys from './keys.json'
+
 // window.addEventListener("deviceorientation", handleOrientation, true);
 var states = ['coasting', 'accelerating_aggressively', 'hard_braking']
 var image_key = {
@@ -12,6 +13,9 @@ var image_key = {
   "accelerating_aggressively" :background_1,
   "hard_braking" :background_2,
 }
+var io = require('socket.io-client')
+const stream_url = 'https://stream.automatic.com?token='+keys['client_id']+':'+keys['client_secret']
+var socket = io(stream_url)
 
 class App extends Component {
   constructor(props){
@@ -30,11 +34,14 @@ class App extends Component {
       absolute: 0,
       alpha: 0,
       beta: 0,
-      gamma: 0
+      gamma: 0, 
+      event: "None"
     }
     this.handleMotion = this.handleMotion.bind(this)
     this.handleOrientation = this.handleOrientation.bind(this)
     this.handleDebugger = this.handleDebugger.bind(this);
+    this.handleCarEvent = this.handleCarEvent.bind(this);
+
     var text_style = {
       textAlign: "left",
       display: "inline", 
@@ -67,12 +74,23 @@ class App extends Component {
             gamma: {this.state.gamma}
           </div>
         </div>
+        <b>Vehicle Events</b><br/>
+        <div class="row">
+          <div class = "col-sm-4">
+            event: {this.state.event}
+          </div>
+        </div>
       </div>
     )
+
+
   }
   componentDidMount(){
     window.addEventListener('devicemotion',this.handleMotion)
     window.addEventListener('deviceorientation',this.handleOrientation)
+    socket.on('connect', event => this.handleCarEvent(event, "Connected! Listening for events"))
+    socket.on('location:updated', eventJSON => this.handleCarEvent(eventJSON, "Location Updated!"))
+    socket.on('error', errorMessage => this.handleCarEvent(errorMessage, errorMessage))
   }
   handleMotion(event){
     const x = event.acceleration.x.toFixed(1)
@@ -103,6 +121,12 @@ class App extends Component {
     })
     this.updateValues()
   }
+  handleCarEvent(event, value){
+    this.setState({
+      event: value
+    })
+    this.updateValues()
+  }
   updateValues(){
     this.debugger = (
       <div >
@@ -130,6 +154,12 @@ class App extends Component {
           </div>
           <div class = "col-sm-4">
             gamma: {this.state.gamma}
+          </div>
+        </div>
+        <b>Vehicle Events</b><br/>
+        <div class="row">
+          <div class = "col-sm-4">
+            event: {this.state.event}
           </div>
         </div>
       </div>
@@ -164,12 +194,15 @@ class App extends Component {
     var hard_braking = 4
     var hard_speed = 1.5
     if (accel>=hard_braking) {
+      //you are braking big time
       return states[2]
     }
     else if (accel>=hard_speed){
+      //not so chill state
       return states[1]
     }
-    else {
+    else if (accel<(hard_speed-0.5)){
+      //chill state
       return states[0]
     }
   }
@@ -209,16 +242,5 @@ class App extends Component {
       
     );
   }
-}
-function integrate(){
-  var interval = 1
-  
-}
-function live_feed(){
-  var hard_braking = -5.3936575
-
-}
-function handleLocationError(message) {
-  window.alert(message)
 }
 export default App;
