@@ -47,43 +47,6 @@ class App extends Component {
       display: "inline", 
       margin: "0 auto"
     }
-    this.debugger = (
-      <div style = {text_style}>
-        <b>Acceleration</b><br/>
-        <div class="row">
-          <div class = "col-sm-4" style={text_style}>
-            a_x: {this.state.x}
-          </div>
-          <div class = "col-sm-4">
-            a_y: {this.state.y}
-          </div>
-          <div class = "col-sm-4">
-            a_z: {this.state.z}
-          </div>
-        </div>
-        <br />
-        <b>Device Rotation</b><br/>
-        <div class="row">
-          <div class = "col-sm-4">
-            alpha: {this.state.alpha}
-          </div>
-          <div class = "col-sm-4">
-            beta: {this.state.beta}
-          </div>
-          <div class = "col-sm-4">
-            gamma: {this.state.gamma}
-          </div>
-        </div>
-        <b>Vehicle Events</b><br/>
-        <div class="row">
-          <div class = "col-sm-4">
-            event: {this.state.event}
-          </div>
-        </div>
-      </div>
-    )
-
-
   }
   componentDidMount(){
     window.addEventListener('devicemotion',this.handleMotion)
@@ -106,7 +69,6 @@ class App extends Component {
         z:z
       });
     }
-    this.updateValues()
   }
   handleOrientation(event){
     // const abs = event.absolute.toFixed(1)
@@ -119,51 +81,11 @@ class App extends Component {
       beta: beta,
       gamma: gamma
     })
-    this.updateValues()
   }
   handleCarEvent(event, value){
     this.setState({
       event: value
     })
-    this.updateValues()
-  }
-  updateValues(){
-    this.debugger = (
-      <div >
-        <br></br>
-        <b>Acceleration</b><br/>
-        <div class="row">
-          <div class = "col-sm-4">
-            a_x: {this.state.x}
-          </div>
-          <div class = "col-sm-4">
-            a_y: {this.state.y}
-          </div>
-          <div class = "col-sm-4">
-            a_z: {this.state.z}
-          </div>
-        </div>
-        <br />
-        <b>Device Rotation</b><br/>
-        <div class="row">
-          <div class = "col-sm-4">
-            alpha: {this.state.alpha}
-          </div>
-          <div class = "col-sm-4">
-            beta: {this.state.beta}
-          </div>
-          <div class = "col-sm-4">
-            gamma: {this.state.gamma}
-          </div>
-        </div>
-        <b>Vehicle Events</b><br/>
-        <div class="row">
-          <div class = "col-sm-4">
-            event: {this.state.event}
-          </div>
-        </div>
-      </div>
-    )
   }
   handleDebugger(event){
     if (this.state.show_debugger == false){
@@ -223,7 +145,6 @@ class App extends Component {
     }
     return (
       <div>
-
         <meta name = "apple-mobile-web-app-capable" content="yes" />
           <div className="App">
             {/* <header className="App-header"> */}
@@ -232,14 +153,46 @@ class App extends Component {
                 <button type = "Button" onClick = {this.handleDebugger} className = "btn" style={button_style}>{this.state.button_name}</button>
                 <img src={this.state.background_image} className="Background-Image" alt="logo" style = {image_style}/>
                 <div className = "Debugger" style = {style}>
-                  {this.debugger}
+                  <div >
+                    <br></br>
+                    <b>Acceleration</b><br/>
+                    <div class="row">
+                      <div class = "col-sm-4">
+                        a_x: {this.state.x}
+                      </div>
+                      <div class = "col-sm-4">
+                        a_y: {this.state.y}
+                      </div>
+                      <div class = "col-sm-4">
+                        a_z: {this.state.z}
+                      </div>
+                    </div>
+                    <br />
+                    <b>Device Rotation</b><br/>
+                    <div class="row">
+                      <div class = "col-sm-4">
+                        alpha: {this.state.alpha}
+                      </div>
+                      <div class = "col-sm-4">
+                        beta: {this.state.beta}
+                      </div>
+                      <div class = "col-sm-4">
+                        gamma: {this.state.gamma}
+                      </div>
+                    </div>
+                    <b>Vehicle Events</b><br/>
+                    <div class="row">
+                      <div class = "col-sm-4">
+                        event: {this.state.event}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               
             {/* </header> */}
           </div>
-      </div>
-      
+      </div>   
     );
   }
 }
