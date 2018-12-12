@@ -16,6 +16,12 @@ var image_key = {
 var io = require('socket.io-client')
 const stream_url = 'https://stream.automatic.com?token='+keys['client_id']+':'+keys['client_secret']
 var socket = io(stream_url)
+const time_0 = Math.round(new Date())
+const integration_domain = 15
+var time_array =[]
+var accel_array = []
+var ticker = 0
+
 
 class App extends Component {
   constructor(props){
@@ -26,7 +32,7 @@ class App extends Component {
       z     :0,
       velocity :0, 
       t0: new Date(),
-      driving_state: "flat", 
+      driving_state: states[1],
       background_image : background_0,
       show_debugger: false,
       button_name: "Show Debugger",
@@ -35,23 +41,17 @@ class App extends Component {
       alpha: 0,
       beta: 0,
       gamma: 0, 
-      event: "None"
+      event: "None",
     }
     this.handleMotion = this.handleMotion.bind(this)
     this.handleOrientation = this.handleOrientation.bind(this)
     this.handleDebugger = this.handleDebugger.bind(this);
     this.handleCarEvent = this.handleCarEvent.bind(this);
-
-    var text_style = {
-      textAlign: "left",
-      display: "inline", 
-      margin: "0 auto"
-    }
+    socket.on('connect', event => this.handleCarEvent(event, "Connected! Listening for events"))
   }
   componentDidMount(){
     window.addEventListener('devicemotion',this.handleMotion)
     window.addEventListener('deviceorientation',this.handleOrientation)
-    socket.on('connect', event => this.handleCarEvent(event, "Connected! Listening for events"))
     socket.on('location:updated', eventJSON => this.handleCarEvent(eventJSON, "Location Updated!"))
     socket.on('error', errorMessage => this.handleCarEvent(errorMessage, errorMessage))
   }
@@ -60,13 +60,16 @@ class App extends Component {
     const y = event.acceleration.y.toFixed(1)
     const z = event.acceleration.z.toFixed(1)
     var accel = this.total_accel(x,y,z)
+    var current_time = Math.round(new Date())
+    this.collect_data(accel, current_time)
     var state = this.read_image(accel)
     if (state != this.state.driving_state){
       this.setState({
         background_image: image_key[state],
         x:x,
         y:y,
-        z:z
+        z:z,
+        driving_state: state
       });
     }
   }
@@ -104,26 +107,56 @@ class App extends Component {
     }
   }
   total_accel(x, y, z){
-    var direction = 1.0;
-    if (x<0){
-      direction = 1.0;
+    var direction = 1.0
+    if (z>0 || y<0){
+      direction = -1.0
     }
-    return direction*Math.sqrt(x*x+y*y+z*z)
+    var accel = direction*Math.sqrt(x*x+y*y+z*z)
+    return accel
+  }
+  collect_data(accel,time){
+    time_array.push(time)
+    accel_array.push(accel)
+    ticker++
+    if (ticker > integration_domain) {
+      time_array.shift()
+      accel_array.shift()
+      var time_a = time_array[0]
+      ticker = 0
+      var integral_velocity = this.integrate(accel_array, time_array)
+      this.set_velocity(this.state.velocity+integral_velocity)
+    }
+  }
+  set_velocity (newVelocity){
+    this.setState({
+      velocity: newVelocity
+    })
+  }
+  integrate(accel_array, time_array){
+    var velocity = 0
+    for (var i = 0; i<time_array.length-1; i++){
+      var diff = time_array[i+1]-time_array[i]
+      velocity+= diff * (accel_array[i]+accel_array[i+1])/2
+    }
+    return velocity
   }
   read_image(accel){
-    // var hard_braking = -5.3936575
-    // var hard_speed = 2.5
-    var hard_braking = 4
-    var hard_speed = 1.5
-    if (accel>=hard_braking) {
+    //basically if you're hard braking, the state will change. But to smoothen changes, we only make changes if you slow down or speed up significantly
+    var state_change_threshold = 0.1
+    var hard_braking_top = 4
+    var hard_braking_bottom = hard_braking_top * (1-state_change_threshold)
+
+    var speed_top = 1.5
+    var speed_bottom = hard_braking_top * (1-state_change_threshold)
+    if (accel>=hard_braking_top) {
       //you are braking big time
       return states[2]
     }
-    else if (accel>=hard_speed){
+    else if (accel>=speed_top || (this.state.driving_state == states[2] && accel<=(hard_braking_bottom))){
       //not so chill state
       return states[1]
     }
-    else if (accel<(hard_speed-0.5)){
+    else if (accel<speed_top || (this.state.driving_state == states[1] && accel<=speed_bottom)){
       //chill state
       return states[0]
     }
@@ -180,10 +213,14 @@ class App extends Component {
                         gamma: {this.state.gamma}
                       </div>
                     </div>
+                    <br/>
                     <b>Vehicle Events</b><br/>
                     <div class="row">
                       <div class = "col-sm-4">
                         event: {this.state.event}
+                      </div>
+                      <div class = "col-sm-4">
+                        velocity: {this.state.velocity}
                       </div>
                     </div>
                   </div>
